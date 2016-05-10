@@ -4,13 +4,15 @@ using namespace std;
 
 class FluxDensity {
     private:
-        arr<double> S_, S2p5dNdS_, dNdS_, logS_, dNdlogS_;
+        arr<double> read_tmp_, S_, S2p5dNdS_, dNdS_, logS_, dNdlogS_;
         int num_flux;
         void dealloc();
 
     public:
         FluxDensity (string &FileName);
         ~FluxDensity();
+
+        void assertArraySizes() const;
 
         /* returns the number of flux */
         int Num_Flux() { return num_flux; }
@@ -24,4 +26,6 @@ class FluxDensity {
         arr<double> &logS() { return logS_; }
         /* returns the dN/dlogS array */
         arr<double> &dNdlogS() { return dNdlogS_; }
+
+        void Set(int nflux);
 };

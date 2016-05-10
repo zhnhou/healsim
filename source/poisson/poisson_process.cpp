@@ -27,9 +27,24 @@ FluxDensity::FluxDensity(string &FileName) {
         if (num_row == 0) num_col = ct;
         if (num_col == ct) num_row++;
     }
-
+    Set(num_row);
 }
 
 FluxDensity::~FluxDensity(){}
+
+void FluxDensity::assertArraySizes() const {
+    planck_assert(multiequal( num_flux, S_.size(), S2p5dNdS_.size(), dNdS_.size(), 
+    logS_.size(), dNdlogS_.size() ), "incorrect array sizes");
+
+}
+
+void FluxDensity::Set(int nflux) {
+    num_flux = nflux;
+    S_.alloc(num_flux);
+    S2p5dNdS_.alloc(num_flux);
+    dNdS_.alloc(num_flux);
+    logS_.alloc(num_flux);
+    dNdlogS_.alloc(num_flux);
+}
 
 //template<typename T> void create_poission_flux_density(const string FileName, P)
