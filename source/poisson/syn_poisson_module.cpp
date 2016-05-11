@@ -18,6 +18,7 @@ template<typename T> void syn_poisson (paramfile &params, int isim) {
 
     FluxDensity flux (infile);
     
+    //cout << flux.S()[0] << endl;
 }
 } // unnamed namespace
 

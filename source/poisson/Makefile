@@ -2,8 +2,8 @@ CC = icpc
 
 HPXCXX = $(HEALPIX)/src/cxx/linux_icc
 
-CCFLAG = -O3 -openmp
-LDFLAG = -O3 -openmp -L$(HPXCXX)/lib -lcxxsupport -lhealpix_cxx
+CCFLAG = -std=c++14 -O3 -openmp -traceback
+LDFLAG = -std=c++14 -O3 -openmp -L$(HPXCXX)/lib -lcxxsupport -lhealpix_cxx -traceback
 
 INCFLAG = -I./ -I$(HPXCXX)/include -I../../include
 
