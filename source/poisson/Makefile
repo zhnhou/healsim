@@ -2,13 +2,13 @@ CC = icpc
 
 HPXCXX = $(HEALPIX)/src/cxx/linux_icc
 
-CCFLAG = -std=c++14 -O3 -openmp -traceback
-LDFLAG = -std=c++14 -O3 -openmp -L$(HPXCXX)/lib -lcxxsupport -lhealpix_cxx -traceback
+CCFLAG = -std=c++14 -O3 -openmp
+LDFLAG = -std=c++14 -O3 -openmp -L$(HPXCXX)/lib -lcxxsupport -lhealpix_cxx -mkl
 
-INCFLAG = -I./ -I$(HPXCXX)/include -I../../include
+INCFLAG = -I./ -I$(HPXCXX)/include -I$(MKLROOT)/include -I../../include
 
 PRJ = syn_poisson
-OBJ = poisson_process.o $(PRJ)_module.o $(PRJ).o
+OBJ = healsim_rng.o poisson_process.o $(PRJ)_module.o $(PRJ).o
 
 %.o: %.cpp
 	$(CC) $(CCFLAG) $(INCFLAG) -c $*.cpp

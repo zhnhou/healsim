@@ -1,8 +1,6 @@
 #include <fstream>
 
-using namespace std;
-
-class FluxDensity {
+class FluxDensityInfo {
     private:
         int num_flux_;
         double *read_tmp;        
@@ -10,11 +8,14 @@ class FluxDensity {
 
     public:
         //double *read_tmp;
+        int    nside, npix;
+        double flux_min, flux_max;
+
         double *S, *S2p5dNdS, *dNdS, *logS;
         double *dNdlogS;
 
-        FluxDensity (string &FileName);
-        ~FluxDensity();
+        FluxDensityInfo (string &FileName);
+        ~FluxDensityInfo();
 
         /* returns the number of flux */
         int Num_Flux() { return num_flux_; }

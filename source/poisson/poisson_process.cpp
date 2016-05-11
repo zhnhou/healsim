@@ -7,7 +7,7 @@
 
 using namespace std;
 
-FluxDensity::FluxDensity(string &FileName) {
+FluxDensityInfo::FluxDensityInfo(string &FileName) {
 
     string      line;
     ifstream    infile(FileName.c_str());
@@ -34,14 +34,14 @@ FluxDensity::FluxDensity(string &FileName) {
 
     infile.open(FileName.c_str());
     Read(infile);
-    //infile.close();
+    infile.close();
     
 }
 
-FluxDensity::~FluxDensity(){}
+FluxDensityInfo::~FluxDensityInfo(){}
 
 
-void FluxDensity::Set(int nflux, int ncol) {
+void FluxDensityInfo::Set(int nflux, int ncol) {
     num_flux_ = nflux;
     S = new double [num_flux_];
     S2p5dNdS = new double [num_flux_];
@@ -51,7 +51,7 @@ void FluxDensity::Set(int nflux, int ncol) {
     read_tmp = new double [ncol];
 }
 
-void FluxDensity::Read(ifstream& infile) {
+void FluxDensityInfo::Read(ifstream& infile) {
 
     int    ct=0, irow=0;
     double tmp;
@@ -89,8 +89,7 @@ void FluxDensity::Read(ifstream& infile) {
         dNdlogS[irow] = dNdS[irow] * S[irow];
 
         irow++;
-        
     }
 }
 
-//template<typename T> void create_poission_flux_density(const string FileName, P)
+//template<typename T> void create_poission_map(FluxDensity flux, Healpix_Map )
