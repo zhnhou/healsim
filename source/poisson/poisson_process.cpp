@@ -5,7 +5,6 @@
 #include <cmath>
 #include "poisson_process.h"
 
-using namespace std;
 
 FluxDensityInfo::FluxDensityInfo(string &FileName) {
 

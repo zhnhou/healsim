@@ -1,6 +1,8 @@
 #include "paramfile.h"
 #include "announce.h"
 #include "mkl_vsl.h"
+
+#include "healsim_rng.h"
 #include "poisson_process.h"
 
 using namespace std;
@@ -16,6 +18,9 @@ template<typename T> void syn_poisson (paramfile &params, int isim, int feedback
     
     double flux_min = params.find<double>("flux_min_mJy", 0.00e0);
     double flux_max = params.find<double>("flux_max_mJy");
+
+    string rng_cache_path = outpath + "/rng_cache/";
+    rngHandle rng (seed, isim, rng_cache_path, true, false);
 
     FluxDensityInfo flux (infile);
     if (feedback > 0)
