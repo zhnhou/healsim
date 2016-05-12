@@ -17,5 +17,5 @@ class rngHandle {
         bool hpx_rng_init=false;
 
         void save_mkl_rng (string &rng_file);
-        void retrieve ();
+        void read_mkl_rng (string &rng_file);
 };

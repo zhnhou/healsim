@@ -20,7 +20,7 @@ rngHandle::rngHandle(int seed, int isim, string &rng_cache_path, bool mkl_rng, b
         ifstream in_rng (vsl_poisson_rng);
 
         if (in_rng.good()) {
-            retrieve();
+            read_mkl_rng(vsl_poisson_rng);
         } else if ( (! vsl_poisson_init) || (! vsl_uniform_init) ) {
             vslNewStream( &vsl_poisson_stream, VSL_BRNG_MCG31, seed+10*isim);
             vslNewStream( &vsl_uniform_stream, VSL_BRNG_MCG31, -1*(seed-100*isim));
@@ -30,7 +30,8 @@ rngHandle::rngHandle(int seed, int isim, string &rng_cache_path, bool mkl_rng, b
         vsl_poisson_init = true;
         vsl_uniform_init = true;
     } else {
-
+        cout << "Choose mkl_rng or hpx_rng. STOP!" << endl;
+        exit(1);
     }
 }
 
@@ -45,6 +46,9 @@ void rngHandle::save_mkl_rng(string &rng_file) {
     outbin.close();
 }
 
-void rngHandle::retrieve() {
-
+void rngHandle::read_mkl_rng(string &rng_file) {
+    ifstream inbin(rng_file.c_str(), ios::in | ios::binary);
+    inbin.read( (char*) &vsl_poisson_stream, sizeof(vsl_poisson_stream) );
+    inbin.read( (char*) &vsl_uniform_stream, sizeof(vsl_uniform_stream) );
+    inbin.close();
 }
