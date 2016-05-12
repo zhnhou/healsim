@@ -3,6 +3,9 @@
 #include <sstream>
 #include <string>
 #include <cmath>
+
+#include "healpix_map.h"
+#include "healsim_rng.h"
 #include "poisson_process.h"
 
 
@@ -91,4 +94,6 @@ void FluxDensityInfo::Read(ifstream& infile) {
     }
 }
 
-//template<typename T> void create_poission_map(FluxDensity flux, Healpix_Map )
+template<typename T> void create_poission_map(rngHandle rng, FluxDensityInfo flux, Healpix_Map<T> map) {
+
+}

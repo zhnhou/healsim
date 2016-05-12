@@ -2,10 +2,10 @@ CC = icpc
 
 HPXCXX = $(HEALPIX)/src/cxx/linux_icc
 
-CCFLAG = -std=c++14 -O3 -openmp
-LDFLAG = -std=c++14 -O3 -openmp -L$(HPXCXX)/lib -lcxxsupport -lhealpix_cxx -mkl
+CCFLAG = -O3 -openmp
+LDFLAG = -O3 -openmp -L$(CFITSIO)/lib -L$(HPXCXX)/lib -lhealpix_cxx -lcxxsupport -lsharp -lfftpack -lc_utils -lcfitsio -mkl
 
-INCFLAG = -I./ -I$(HPXCXX)/include -I$(MKLROOT)/include -I../../include
+INCFLAG = -I./ -I$(CFITSIO)/include -I$(HPXCXX)/include -I$(MKLROOT)/include -I../../include
 
 PRJ = syn_poisson
 OBJ = healsim_rng.o poisson_process.o $(PRJ)_module.o $(PRJ).o

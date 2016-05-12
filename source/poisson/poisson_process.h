@@ -11,7 +11,6 @@ class FluxDensityInfo {
 
     public:
         //double *read_tmp;
-        int    nside, npix;
         double flux_min, flux_max;
 
         double *S, *S2p5dNdS, *dNdS, *logS;

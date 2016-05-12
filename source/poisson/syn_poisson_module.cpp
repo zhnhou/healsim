@@ -1,7 +1,8 @@
 #include "paramfile.h"
 #include "announce.h"
-#include "mkl_vsl.h"
+#include "healpix_map.h"
 
+#include "mkl_vsl.h"
 #include "healsim_rng.h"
 #include "poisson_process.h"
 
@@ -19,10 +20,15 @@ template<typename T> void syn_poisson (paramfile &params, int isim, int feedback
     double flux_min = params.find<double>("flux_min_mJy", 0.00e0);
     double flux_max = params.find<double>("flux_max_mJy");
 
-    string rng_cache_path = outpath + "/rng_cache/";
-    rngHandle rng (seed, isim, rng_cache_path, true, false);
+    string rng_cache_path = outpath + "/rng_cache";
 
+    rngHandle rng (seed, isim, rng_cache_path, true, false);
     FluxDensityInfo flux (infile);
+    flux.flux_min = flux_min;
+    flux.flux_max = flux_max;
+
+    Healpix_Map<T> map(nside, RING, SET_NSIDE);
+
     if (feedback > 0)
         cout << "Flux Density initialized" << endl;
     

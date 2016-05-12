@@ -1,4 +1,5 @@
 #include <string>
+#include "mkl_vsl.h"
 
 using namespace std;
 
@@ -12,9 +13,9 @@ class rngHandle {
         VSLStreamStatePtr vsl_poisson_stream;
         VSLStreamStatePtr vsl_uniform_stream;
         
-        bool vsl_poisson_init=false;
-        bool vsl_uniform_init=false;
-        bool hpx_rng_init=false;
+        bool vsl_poisson_init;
+        bool vsl_uniform_init;
+        bool hpx_rng_init;
 
         void save_mkl_rng (string &rng_file);
         void read_mkl_rng (string &rng_file);
