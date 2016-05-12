@@ -97,6 +97,9 @@ void FluxDensityInfo::Read(ifstream& infile) {
     }
 }
 
-template<typename T> void create_poission_map(rngHandle rng, FluxDensityInfo flux, Healpix_Map<T> map) {
-
+template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<T> &map) {
+    ;
 }
+
+template void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<double> &map);
+template void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<float> &map);

@@ -23,6 +23,11 @@ class FluxDensityInfo {
         int Num_Flux() { return num_flux_; }
 
         void Set(int nflux, int ncol);
-
         void Read(ifstream &infile);
 };
+
+class rngHandle;
+class FluxDensityInfo;
+template<typename T> class Healpix_Map;
+
+template<typename T> void create_poisson_map (rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<T> &map);

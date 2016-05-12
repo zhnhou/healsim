@@ -12,6 +12,7 @@ namespace {
 template<typename T> void syn_poisson (int isim, rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<T> &poisson_map, int feedback=0) {
 
     rng.Set(isim);
+    create_poisson_map (rng, flux, poisson_map);
 }
 } // unnamed namespace
 
