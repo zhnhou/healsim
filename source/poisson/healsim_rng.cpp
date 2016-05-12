@@ -7,13 +7,30 @@
 #include "mkl_vsl.h"
 #include "healsim_rng.h"
 
-rngHandle::rngHandle(int seed, int isim, string &rng_cache_path, bool mkl_rng, bool hpx_rng) {
+rngHandle::rngHandle(int seed, string &rng_cache_path, bool mkl_rng, bool hpx_rng) {
     rng_path_ = rng_cache_path;
+    seed_ = seed;
+    mkl_rng_ = mkl_rng;
+    hpx_rng_ = hpx_rng;
 
-    if (hpx_rng) {
+    if (mkl_rng && hpx_rng) {
+        cout << "Both mkl_rng and hpx_rng are true. STOP!" << endl;
+        exit(1);
+    } else if (! (mkl_rng && hpx_rng)) {
+        cout << "Neither mkl_rng or hpx_rng is true. STOP!" << endl;
+        exit(1);
+    }
+
+    vsl_poisson_init = false;
+    vsl_uniform_init = false;
+    hpx_gaussian_init = false;
+}
+
+int rngHandle::Set(int isim) {
+    if (hpx_rng_) {
 
 
-    } else if (mkl_rng) {
+    } else if (mkl_rng_) {
         stringstream ss;
         ss << isim;
         string vsl_poisson_rng = rng_path_+"/vsl_poisson_sim_"+ss.str()+".rng";
@@ -23,17 +40,17 @@ rngHandle::rngHandle(int seed, int isim, string &rng_cache_path, bool mkl_rng, b
         if (in_rng.good()) {
             read_mkl_rng(vsl_poisson_rng);
         } else if ( (! vsl_poisson_init) || (! vsl_uniform_init) ) {
-            vslNewStream( &vsl_poisson_stream, VSL_BRNG_MCG31, seed+10*isim);
-            vslNewStream( &vsl_uniform_stream, VSL_BRNG_MCG31, -1*(seed-100*isim));
+            vslNewStream( &vsl_poisson_stream, VSL_BRNG_MCG31, seed_+10*isim);
+            vslNewStream( &vsl_uniform_stream, VSL_BRNG_MCG31, -1*(seed_-100*isim));
             save_mkl_rng(vsl_poisson_rng);
         }
 
         vsl_poisson_init = true;
         vsl_uniform_init = true;
-    } else {
-        cout << "Choose mkl_rng or hpx_rng. STOP!" << endl;
-        exit(1);
+
+        return 0;
     }
+
 }
 
 rngHandle::~rngHandle() {

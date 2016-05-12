@@ -9,10 +9,13 @@
 #include "poisson_process.h"
 
 
-FluxDensityInfo::FluxDensityInfo(string &FileName) {
+FluxDensityInfo::FluxDensityInfo(string &FileName, double flux_min_mJy=0.00e0, double flux_max_mJy=50.00e0) {
 
     string      line;
     ifstream    infile(FileName.c_str());
+
+    flux_min = flux_min_mJy;
+    flux_max = flux_max_mJy;
 
     if (not infile.is_open())
         cout << "File not open\n";

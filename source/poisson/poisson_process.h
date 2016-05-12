@@ -16,7 +16,7 @@ class FluxDensityInfo {
         double *S, *S2p5dNdS, *dNdS, *logS;
         double *dNdlogS;
 
-        FluxDensityInfo (string &FileName);
+        FluxDensityInfo (string &FileName, double flux_min_mJy, double flux_max_mJy);
         ~FluxDensityInfo();
 
         /* returns the number of flux */
