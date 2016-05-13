@@ -8,6 +8,7 @@ class rngHandle {
         string  rng_path_;
         int     seed_;
         bool    mkl_rng_, hpx_rng_;
+        int     vsl_stream_size_;
     public:
         rngHandle (int seed, string &rng_cache_path, bool mkl_rng, bool hpx_rng);
         ~rngHandle();

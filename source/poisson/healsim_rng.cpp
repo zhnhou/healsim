@@ -35,6 +35,10 @@ int rngHandle::Set(int isim) {
 
 
     } else if (mkl_rng_) {
+        VSLBRngProperties properties;
+        vslGetBrngProperties(VSL_BRNG_MCG31, &properties);
+        vsl_stream_size_ = properties.StreamStateSize;
+
         stringstream ss;
         ss << isim;
         string vsl_poisson_rng = rng_path_+"/vsl_poisson_sim_"+ss.str()+".rng";
@@ -44,7 +48,7 @@ int rngHandle::Set(int isim) {
         if (in_rng.good()) {
             read_mkl_rng(vsl_poisson_rng);
         } else if ( (! vsl_poisson_init) || (! vsl_uniform_init) ) {
-            vslNewStream( &vsl_stream_poisson, VSL_BRNG_MCG31, seed_+10*isim);
+            vslNewStream( &vsl_stream_poisson, VSL_BRNG_MCG31, seed_+10*isim+100);
             vslNewStream( &vsl_stream_uniform, VSL_BRNG_MCG31, -1*(seed_-100*isim));
             save_mkl_rng(vsl_poisson_rng);
         }
@@ -61,11 +65,16 @@ rngHandle::~rngHandle() {
 
 }
 
+/*
+For saving and retrieving the vsl stream, here is a very good direction
+https://software.intel.com/en-us/forums/intel-math-kernel-library/topic/309910
+*/
+
 void rngHandle::save_mkl_rng(string &rng_file) {
     ofstream outbin(rng_file.c_str(), ios::out | ios::binary);
     if (outbin.good()) {
-        outbin.write( (char*) &vsl_stream_poisson, sizeof(vsl_stream_poisson) );
-        outbin.write( (char*) &vsl_stream_uniform, sizeof(vsl_stream_uniform) );
+        outbin.write( (char*) vsl_stream_poisson, vsl_stream_size_ );
+        outbin.write( (char*) vsl_stream_uniform, vsl_stream_size_ );
     } else {
         cout << "Error in writting to file - " << endl;
         cout << rng_file << endl;
@@ -77,9 +86,30 @@ void rngHandle::save_mkl_rng(string &rng_file) {
 void rngHandle::read_mkl_rng(string &rng_file) {
     ifstream inbin(rng_file.c_str(), ios::in | ios::binary);
 
+    VSLStreamStatePtr vsl_stream_poisson_cache;
+    vslNewStream( &vsl_stream_poisson_cache, VSL_BRNG_MCG31, 0);
+
+    VSLStreamStatePtr vsl_stream_uniform_cache;
+    vslNewStream( &vsl_stream_uniform_cache, VSL_BRNG_MCG31, 0);
+
     if (inbin.good()) {
-        inbin.read( (char*) &vsl_stream_poisson, sizeof(vsl_stream_poisson) );
-        inbin.read( (char*) &vsl_stream_uniform, sizeof(vsl_stream_uniform) );
+        /* Pay special attention here:
+           it is (char*) vsl_stream_poisson_cache, instead of (char*) &vsl_stream_poisson_cache
+           a relevant explanation can be found at
+           http://www.cplusplus.com/forum/general/76997/
+
+           same treatment in outbin.write()
+        */
+        inbin.read( (char*) vsl_stream_poisson_cache, vsl_stream_size_ );
+        inbin.read( (char*) vsl_stream_uniform_cache, vsl_stream_size_ );
+
+        vslNewStream( &vsl_stream_poisson, VSL_BRNG_MCG31, 0);
+        vslNewStream( &vsl_stream_uniform, VSL_BRNG_MCG31, 0);
+
+        //status = vslCopyStreamState( deststream, srcstream );
+    
+        vslCopyStreamState( vsl_stream_poisson, vsl_stream_poisson_cache );
+        vslCopyStreamState( vsl_stream_uniform, vsl_stream_uniform_cache );
     } else {
         cout << "Error in reading from file - " << endl;
         cout << rng_file << endl;

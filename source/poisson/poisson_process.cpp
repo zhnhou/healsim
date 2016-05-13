@@ -20,8 +20,10 @@ FluxDensityInfo::FluxDensityInfo(string &FileName, double flux_min_mJy=0.00e0, d
     flux_min = flux_min_mJy;
     flux_max = flux_max_mJy;
 
-    if (not infile.is_open())
+    if (not infile.is_open()) {
         cout << "File not open\n";
+        exit(1);
+    }
 
     int ct=0;
     int num_col=0, num_row=0;
@@ -56,8 +58,7 @@ void FluxDensityInfo::Set(int nflux, int ncol) {
     dNdS = new double [num_flux_];
     logS = new double [num_flux_];
     dNdlogS = new double [nflux];
-    read_tmp = new double [ncol];
-    dlogS = S[1] - S[0];
+    read_tmp = new double [ncol]; 
 }
 
 void FluxDensityInfo::Read(ifstream& infile) {
@@ -99,6 +100,8 @@ void FluxDensityInfo::Read(ifstream& infile) {
 
         irow++;
     }
+
+    dlogS = S[1] - S[0];
 }
 
 /*
@@ -167,8 +170,11 @@ template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &fl
         for (int i=0; i<=ct; ++i) dN[i] -= dN0[i];
     }
 
-    //int errcode = viRngPoissonV(rng.vsl_method_poisson, rng.vsl_stream_poisson, ct-ct0+1, &dN_Poisson[ct0], &dN[ct0]);
-    int errcode = viRngPoissonV(rng.vsl_method_poisson, rng.vsl_stream_poisson, ct+1, dN_Poisson, dN);
+    int errcode = viRngPoissonV(rng.vsl_method_poisson, rng.vsl_stream_poisson, ct-ct0+1, &dN_Poisson[ct0], &dN[ct0]);
+    //int errcode = viRngPoissonV(rng.vsl_method_poisson, rng.vsl_stream_poisson, ct+1, dN_Poisson, dN);
+
+    for (int i=0; i<=ct; ++i) cout << dN_Poisson[i] << " ";
+    cout << endl;
 
 }
 
