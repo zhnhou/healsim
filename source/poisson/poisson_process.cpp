@@ -17,8 +17,8 @@ FluxDensityInfo::FluxDensityInfo(string &FileName, double flux_min_mJy=0.00e0, d
     string      line;
     ifstream    infile(FileName.c_str());
 
-    flux_min = flux_min_mJy;
-    flux_max = flux_max_mJy;
+    flux_min = flux_min_mJy * 1.00e-3; // convert to 
+    flux_max = flux_max_mJy * 1.00e-3;
 
     if (not infile.is_open()) {
         cout << "File not open\n";
@@ -101,7 +101,7 @@ void FluxDensityInfo::Read(ifstream& infile) {
         irow++;
     }
 
-    dlogS = S[1] - S[0];
+    dlogS = logS[1] - logS[0];
 }
 
 /*
@@ -134,7 +134,7 @@ void FluxDensityInfo::Read(ifstream& infile) {
 template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<T> &map) {
 
     double frac, frac0;
-    double S_max = max(flux.flux_max, flux.S[flux.Num_Flux()-1]);
+    double S_max = min(flux.flux_max, flux.S[flux.Num_Flux()-1]);
 
 #pragma omp parallel
 {
@@ -172,9 +172,6 @@ template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &fl
 
     int errcode = viRngPoissonV(rng.vsl_method_poisson, rng.vsl_stream_poisson, ct-ct0+1, &dN_Poisson[ct0], &dN[ct0]);
     //int errcode = viRngPoissonV(rng.vsl_method_poisson, rng.vsl_stream_poisson, ct+1, dN_Poisson, dN);
-
-    for (int i=0; i<=ct; ++i) cout << dN_Poisson[i] << " ";
-    cout << endl;
 
 }
 
