@@ -16,10 +16,14 @@ rngHandle::rngHandle(int seed, string &rng_cache_path, bool mkl_rng, bool hpx_rn
     if (mkl_rng && hpx_rng) {
         cout << "Both mkl_rng and hpx_rng are true. STOP!" << endl;
         exit(1);
-    } else if (! (mkl_rng && hpx_rng)) {
+    } else if (! (mkl_rng || hpx_rng)) {
         cout << "Neither mkl_rng or hpx_rng is true. STOP!" << endl;
         exit(1);
     }
+
+    vsl_bng = VSL_BRNG_MCG31;
+    vsl_method_poisson = VSL_RNG_METHOD_POISSONV_POISNORM;
+    vsl_method_uniform = VSL_RNG_METHOD_UNIFORM_STD;
 
     vsl_poisson_init = false;
     vsl_uniform_init = false;
@@ -40,8 +44,8 @@ int rngHandle::Set(int isim) {
         if (in_rng.good()) {
             read_mkl_rng(vsl_poisson_rng);
         } else if ( (! vsl_poisson_init) || (! vsl_uniform_init) ) {
-            vslNewStream( &vsl_poisson_stream, VSL_BRNG_MCG31, seed_+10*isim);
-            vslNewStream( &vsl_uniform_stream, VSL_BRNG_MCG31, -1*(seed_-100*isim));
+            vslNewStream( &vsl_stream_poisson, VSL_BRNG_MCG31, seed_+10*isim);
+            vslNewStream( &vsl_stream_uniform, VSL_BRNG_MCG31, -1*(seed_-100*isim));
             save_mkl_rng(vsl_poisson_rng);
         }
 
@@ -60,8 +64,8 @@ rngHandle::~rngHandle() {
 void rngHandle::save_mkl_rng(string &rng_file) {
     ofstream outbin(rng_file.c_str(), ios::out | ios::binary);
     if (outbin.good()) {
-        outbin.write( (char*) &vsl_poisson_stream, sizeof(vsl_poisson_stream) );
-        outbin.write( (char*) &vsl_uniform_stream, sizeof(vsl_uniform_stream) );
+        outbin.write( (char*) &vsl_stream_poisson, sizeof(vsl_stream_poisson) );
+        outbin.write( (char*) &vsl_stream_uniform, sizeof(vsl_stream_uniform) );
     } else {
         cout << "Error in writting to file - " << endl;
         cout << rng_file << endl;
@@ -74,8 +78,8 @@ void rngHandle::read_mkl_rng(string &rng_file) {
     ifstream inbin(rng_file.c_str(), ios::in | ios::binary);
 
     if (inbin.good()) {
-        inbin.read( (char*) &vsl_poisson_stream, sizeof(vsl_poisson_stream) );
-        inbin.read( (char*) &vsl_uniform_stream, sizeof(vsl_uniform_stream) );
+        inbin.read( (char*) &vsl_stream_poisson, sizeof(vsl_stream_poisson) );
+        inbin.read( (char*) &vsl_stream_uniform, sizeof(vsl_stream_uniform) );
     } else {
         cout << "Error in reading from file - " << endl;
         cout << rng_file << endl;

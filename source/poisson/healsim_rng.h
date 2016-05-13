@@ -12,9 +12,12 @@ class rngHandle {
         rngHandle (int seed, string &rng_cache_path, bool mkl_rng, bool hpx_rng);
         ~rngHandle();
 
-        VSLStreamStatePtr vsl_poisson_stream;
-        VSLStreamStatePtr vsl_uniform_stream;
+        VSLStreamStatePtr vsl_stream_poisson;
+        VSLStreamStatePtr vsl_stream_uniform;
         
+        int     vsl_bng;
+        int     vsl_method_poisson, vsl_method_uniform;
+
         bool vsl_poisson_init;
         bool vsl_uniform_init;
         bool hpx_gaussian_init;
