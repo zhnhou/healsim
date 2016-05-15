@@ -131,10 +131,58 @@ void FluxDensityInfo::Read(ifstream& infile) {
 
 */
 
-template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<T> &map) {
+PoissonN::PoissonN(rngHandle &rng, FluxDensityInfo &flux) {
+    ct_  = 0;
+    ct0_ = 0;
+
+    Set(flux);
+    GenPN(rng);
+}
+
+PoissonN::~PoissonN() {}
+
+void PoissonN::Set(FluxDensityInfo &flux) {
+
+    for (int i=0; i<flux.Num_Flux(); ++i) {
+        if (flux.S[i] <= flux.flux_max) ++ct_;
+        if (flux.S[i] <  flux.flux_min) ++ct0_;
+    }
+
+    dN  = new double [ct_+1]();
+    dN0 = new double [ct0_+1]();
+    dN_Poisson = new int [ct_+1]();
 
     double frac, frac0;
     double S_max = min(flux.flux_max, flux.S[flux.Num_Flux()-1]);
+
+    frac = (log(S_max) - log(flux.S[ct_-1])) / (log(flux.S[ct_]) - log(flux.S[ct_-1]));
+    if (ct0_ != 0) 
+        frac0 = (log(flux.flux_min) - log(flux.S[ct0_-1])) / (log(flux.S[ct0_]) - log(flux.S[ct0_-1]));
+
+    for (int i=0; i<ct_; ++i) dN[i] = flux.dNdlogS[i] * flux.dlogS * fourpi;
+    dN[ct_] = flux.dNdlogS[ct_] * flux.dlogS * fourpi * frac;
+
+    if (ct0_ == 1) {
+        dN0[0] = flux.dNdlogS[0] * flux.dlogS * fourpi * frac0;
+        dN[0] -= dN0[0]; }
+    else if (ct0_ > 1) {
+        for (int i=0; i<ct0_; ++i) dN0[i] = flux.dNdlogS[i] * flux.dlogS * fourpi;
+        dN0[ct0_] = flux.dNdlogS[ct0_] * flux.dlogS * fourpi * frac0;
+
+        for (int i=0; i<=ct_; ++i) dN[i] -= dN0[i];
+    }
+}
+
+void PoissonN::GenPN(rngHandle &rng) {
+
+    viRngPoissonV(rng.vsl_method_poisson, rng.vsl_stream_poisson, ct_-ct0_+1, &dN_Poisson[ct0_], &dN[ct0_]);
+}
+
+
+
+
+
+template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<T> &map) {
 
 #pragma omp parallel
 {
@@ -143,37 +191,10 @@ template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &fl
     for (ipix=0; ipix<map.Npix(); ++ipix) map[ipix] = 0.00e0;
 }
 
-    int ct=0, ct0=0;
-    for (int i=0; i<flux.Num_Flux(); ++i) {
-        if (flux.S[i] <= flux.flux_max) ++ct;
-        if (flux.S[i] <  flux.flux_min) ++ct0;
-    }
-
-    double *dN  = new double [ct+1]();
-    double *dN0 = new double [ct0+1]();
-    int *dN_Poisson = new int [ct+1]();
-
-    frac = (log(S_max) - log(flux.S[ct-1])) / (log(flux.S[ct]) - log(flux.S[ct-1]));
-    if (ct0 != 0) 
-        frac0 = (log(flux.flux_min) - log(flux.S[ct0-1])) / (log(flux.S[ct0]) - log(flux.S[ct0-1]));
-
-    for (int i=0; i<ct; ++i) dN[i] = flux.dNdlogS[i] * flux.dlogS * fourpi;
-    dN[ct] = flux.dNdlogS[ct] * flux.dlogS * fourpi * frac;
-
-    if (ct0 == 1) {
-        dN0[0] = flux.dNdlogS[0] * flux.dlogS * fourpi * frac0;
-        dN[0] -= dN0[0]; }
-    else if (ct0 > 1) {
-        for (int i=0; i<ct0; ++i) dN0[i] = flux.dNdlogS[i] * flux.dlogS * fourpi;
-        dN0[ct0] = flux.dNdlogS[ct0] * flux.dlogS * fourpi * frac0;
-
-        for (int i=0; i<=ct; ++i) dN[i] -= dN0[i];
-    }
-
-    int errcode = viRngPoissonV(rng.vsl_method_poisson, rng.vsl_stream_poisson, ct-ct0+1, &dN_Poisson[ct0], &dN[ct0]);
-    //int errcode = viRngPoissonV(rng.vsl_method_poisson, rng.vsl_stream_poisson, ct+1, dN_Poisson, dN);
+    PoissonN poisson_number (rng, flux);
 
 }
 
 template void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<double> &map);
 template void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<float> &map);
+

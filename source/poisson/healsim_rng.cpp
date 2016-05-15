@@ -110,6 +110,9 @@ void rngHandle::read_mkl_rng(string &rng_file) {
     
         vslCopyStreamState( vsl_stream_poisson, vsl_stream_poisson_cache );
         vslCopyStreamState( vsl_stream_uniform, vsl_stream_uniform_cache );
+
+        vslDeleteStream( &vsl_stream_poisson_cache );
+        vslDeleteStream( &vsl_stream_uniform_cache );
     } else {
         cout << "Error in reading from file - " << endl;
         cout << rng_file << endl;

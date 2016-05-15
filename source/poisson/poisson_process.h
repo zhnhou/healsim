@@ -28,7 +28,19 @@ class FluxDensityInfo {
 };
 
 class rngHandle;
-class FluxDensityInfo;
-template<typename T> class Healpix_Map;
+class PoissonN {
+    private:
+        int     ct_, ct0_;
+    public:
+        double  *dN, *dN0;
+        int     *dN_Poisson;
 
+        PoissonN ( rngHandle &rng, FluxDensityInfo &flux );
+        ~PoissonN();
+
+        void Set(FluxDensityInfo &flux);
+        void GenPN(rngHandle &rng);
+};
+
+template<typename T> class Healpix_Map;
 template<typename T> void create_poisson_map (rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<T> &map);
