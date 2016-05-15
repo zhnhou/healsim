@@ -193,6 +193,14 @@ template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &fl
 
     PoissonN poisson_number (rng, flux);
 
+    double nu = 150.00E9;
+    double Tcmb = 2.7255E0;
+    double x = hPlanck * nu / (kBoltzmann * Tcmb);
+    double dbnu = 2.00E0*kBoltzmann * (pow(nu,2.00E0)/pow(speedOfLight,2.00E0)) * (pow(x,2.00E0)*exp(x)) / pow((exp(x)-1.00E0), 2.00E0);
+    double flx = 1.00E20 * dbnu; // 1000.0E0 * 1.00E26 * dbnu / 1.00E9
+
+    double Omega_Pix = fourpi / ((double) map.Npix());
+    double norm = flx * Omega_Pix;
 }
 
 template void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<double> &map);
