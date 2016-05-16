@@ -30,15 +30,20 @@ class FluxDensityInfo {
 class rngHandle;
 class PoissonN {
     private:
-        int     ct_, ct0_;
+        int     ct_, ct0_, nside_;
     public:
+        bool    init=false;
         double  *dN, *dN0;
         int     *dN_Poisson;
+        int     *pixel_list = nullptr;
+        double  *map_dp = nullptr;
 
-        PoissonN ( rngHandle &rng, FluxDensityInfo &flux );
+        PoissonN ( rngHandle &rng, FluxDensityInfo &flux, int npix );
         ~PoissonN();
 
-        void Set(FluxDensityInfo &flux);
+        int Num_Element() { return ct_; }
+
+        void Set(FluxDensityInfo &flux, int npix);
         void GenPN(rngHandle &rng);
 };
 

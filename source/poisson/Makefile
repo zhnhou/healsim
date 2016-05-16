@@ -2,8 +2,8 @@ CC = icpc
 
 HPXCXX = $(HEALPIX)/src/cxx/linux_icc
 
-CCFLAG = -O3 -openmp
-LDFLAG = -O3 -openmp -L$(CFITSIO)/lib -L$(HPXCXX)/lib -lhealpix_cxx -lcxxsupport -lsharp -lfftpack -lc_utils -lcfitsio -mkl
+CCFLAG = -O3 -openmp -std=c++11
+LDFLAG = -O3 -openmp -std=c++11 -L$(CFITSIO)/lib -L$(HPXCXX)/lib -lhealpix_cxx -lcxxsupport -lsharp -lfftpack -lc_utils -lcfitsio -mkl
 
 INCFLAG = -I./ -I$(CFITSIO)/include -I$(HPXCXX)/include -I$(MKLROOT)/include -I../../include
 
