@@ -224,7 +224,11 @@ template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &fl
     }
 
     for (int i=0; i<poisson_number.Num_Element(); ++i) {
-        if (poisson_number.dN_Poisson[i] == 0) continue;
+
+        if (poisson_number.dN_Poisson[i] == 0) {
+            cout << "skip \n";
+            continue;
+        }
 
         viRngUniform(rng.vsl_method_uniform, rng.vsl_stream_uniform, poisson_number.dN_Poisson[i], 
                      poisson_number.pixel_list, 0, map.Npix());
