@@ -247,7 +247,6 @@ template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &fl
     for (ipix=0; ipix<map.Npix(); ++ipix) map[ipix] = poisson_number.map_dp[ipix] / norm;
 }
     
-
 }
 
 template void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<double> &map);
