@@ -8,7 +8,7 @@ LDFLAG = -O3 -openmp -std=c++11 -L$(CFITSIO)/lib -L$(HPXCXX)/lib -lhealpix_cxx -
 INCFLAG = -I./ -I$(CFITSIO)/include -I$(HPXCXX)/include -I$(MKLROOT)/include -I../../include
 
 PRJ = syn_poisson
-OBJ = ../util/map2alm_module.o healsim_rng.o poisson_process.o $(PRJ)_module.o $(PRJ).o
+OBJ = healsim_rng.o poisson_process.o $(PRJ)_module.o $(PRJ).o
 
 %.o: %.cpp
 	$(CC) $(CCFLAG) $(INCFLAG) -c $*.cpp
