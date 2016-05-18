@@ -13,6 +13,7 @@ template<typename T> void syn_poisson (int isim, rngHandle &rng, FluxDensityInfo
 
     rng.Set(isim);
     create_poisson_map (rng, flux, poisson_map);
+
 }
 } // unnamed namespace
 

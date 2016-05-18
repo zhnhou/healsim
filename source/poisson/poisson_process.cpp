@@ -8,9 +8,12 @@
 #include <sys/time.h>
 
 #include "lsconstants.h"
+#include "xcomplex.h"
+#include "alm.h"
 #include "healpix_map.h"
 #include "healsim_rng.h"
 #include "poisson_process.h"
+#include "map2alm_module.h"
 
 using namespace std;
 
@@ -247,6 +250,8 @@ template<typename T> void create_poisson_map(rngHandle &rng, FluxDensityInfo &fl
     for (ipix=0; ipix<map.Npix(); ++ipix) map[ipix] = poisson_number.map_dp[ipix] / norm;
 }
     
+    Alm<xcomplex<T> > alm;
+    map2alm_dummy (map, alm, 2048, 0);
 }
 
 template void create_poisson_map(rngHandle &rng, FluxDensityInfo &flux, Healpix_Map<double> &map);
